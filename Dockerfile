@@ -1,13 +1,19 @@
-FROM golang:1.13.1
+FROM golang:1.15.6
 
-# ユーザーを作成
-ARG DOCKER_UID=1000
-ARG DOCKER_USER=bun
-ARG DOCKER_PASSWORD=bun
-RUN useradd -m --uid ${DOCKER_UID} --groups sudo ${DOCKER_USER} -s /bin/bash \
-  && echo ${DOCKER_USER}:${DOCKER_PASSWORD} | chpasswd
-USER ${DOCKER_USER}
+RUN apt update \
+  && apt install -y vim
+
+ENV GO111MODULE on
 WORKDIR /go/src/work
 
-# 環境変数
-ENV GO111MODULE on
+# install go tools
+RUN go get github.com/uudashr/gopkgs/v2/cmd/gopkgs \
+  github.com/ramya-rao-a/go-outline \
+  github.com/nsf/gocode \
+  github.com/acroca/go-symbols \
+  github.com/fatih/gomodifytags \
+  github.com/josharian/impl \
+  github.com/haya14busa/goplay/cmd/goplay \
+  github.com/go-delve/delve/cmd/dlv \
+  golang.org/x/lint/golint \
+  golang.org/x/tools/gopls
